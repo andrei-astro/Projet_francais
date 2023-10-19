@@ -1,2 +1,84 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+
+#include <iostream>
+#include <vector>
+#include <string.h>
+
+using namespace std;
+
+const int INF = 54;
+
+const int MAX_DIMENSION = 30;
+
+int rez[MAX_DIMENSION], montrer_final[MAX_DIMENSION];
+
+vector <int> semaine[MAX_DIMENSION];
+
+int nombre_sujet, ans = INF, nombre_des_semaines, quelle_semaine;
+
+void verif ()
+{
+    int f[MAX_DIMENSION];
+    memset (f, 0, sizeof(f));
+    int mx = 1;
+    for (int i = 1; i <= nombre_sujet; ++i)
+    {
+        f[rez[i]]++;
+        mx = max (mx, f[rez[i]]);
+    }
+    if (ans > mx) ///Nous vérifions si nous avons réalisé un nombre inférieur de tests par semaine
+    {
+        ans = mx;
+        for (int i = 1; i <= nombre_sujet; ++i)
+            montrer_final[i] = rez[i];
+    }
+}
+
+void bkt (int k)
+{
+    if (k > nombre_sujet)
+    {
+        verif();
+        return;
+    }
+    for (auto it : semaine[k])
+    {
+        rez[k] = it;
+        bkt(k + 1);
+    }
+}
+
+void lire_entree()
+{
+    cin >> nombre_sujet;
+    for (int i = 1; i <= nombre_sujet; ++i)
+    {
+        cin >> nombre_des_semaines;
+        for (int j = 1; j <= nombre_des_semaines; ++j)
+        {
+            cin >> quelle_semaine; /// Les semaines qui conviennent à l'enseignant de la matière i
+            semaine[i].push_back(quelle_semaine); /// Un vecteur que facilite le code
+        }
+    }
+}
+
+void resoudre_le_probleme()
+{
+    bkt (1);
+}
+
+void montrer_la_reponse()
+{
+    ///Je peux vous montrer quand il est optimal de passer le test pour chaque matière
+    cout << ans << '\n';///Le nombre minimal de tests que nous pouvons avoir par semaine
+    for (int i = 1; i <= nombre_sujet; ++i)
+    {
+        cout << montrer_final[i] << ' ';
+    }
+}
+int main()
+{
+    lire_entree();
+    resoudre_le_probleme();
+    montrer_la_reponse();
+    return 0;
+}
